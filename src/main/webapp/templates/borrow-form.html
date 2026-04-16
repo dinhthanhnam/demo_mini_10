@@ -1,0 +1,433 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="layout.html"
+  lang="vi"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đơn Đăng Ký Mượn</title>
+  </head>
+  <body>
+    <main layout:fragment="content" class="py-4">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <h1 class="card-title mb-4 fw-bold">
+                <span th:if="${itemType == 'equipment'}"
+                  >📋 Đơn Đăng Ký Mượn Thiết Bị</span
+                >
+                <span th:unless="${itemType == 'equipment'}"
+                  >📋 Đơn Đăng Ký Sử Dụng Phòng Lab</span
+                >
+              </h1>
+
+              <!-- Item Information -->
+              <div
+                class="alert alert-light border-start border-4 border-primary mb-4"
+              >
+                <div class="row" th:if="${itemType == 'equipment'}">
+                  <div class="col-md-3">
+                    <img
+                      th:src="${equipment.imageUrl}"
+                      class="img-fluid rounded"
+                      th:alt="${equipment.name}"
+                      alt="Equipment"
+                    />
+                  </div>
+                  <div class="col-md-9">
+                    <h5 class="fw-bold" th:text="${equipment.name}">
+                      Equipment Name
+                    </h5>
+                    <p class="text-muted" th:text="${equipment.description}">
+                      Description
+                    </p>
+                    <p>
+                      <strong>Số lượng còn lại:</strong>
+                      <span
+                        class="badge bg-success"
+                        th:text="${equipment.quantityAvailable} + ' cái'"
+                      >
+                        Quantity
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                <div class="row" th:unless="${itemType == 'equipment'}">
+                  <div class="col-md-3">
+                    <img
+                      th:src="${labRoom.imageUrl}"
+                      class="img-fluid rounded"
+                      th:alt="${labRoom.roomName}"
+                      alt="Lab Room"
+                    />
+                  </div>
+                  <div class="col-md-9">
+                    <h5 class="fw-bold" th:text="${labRoom.roomName}">
+                      Lab Room Name
+                    </h5>
+                    <p class="text-muted" th:text="${labRoom.description}">
+                      Description
+                    </p>
+                    <p>
+                      <strong>Sức chứa:</strong>
+                      <span th:text="${labRoom.capacity} + ' người'"
+                        >Capacity</span
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Borrowing Form -->
+              <form
+                th:if="${itemType == 'equipment'}"
+                th:action="@{/borrow/submit-equipment/{id}(id=${equipment.id})}"
+                method="post"
+                th:object="${borrowRequest}"
+                class="needs-validation"
+                novalidate
+              >
+                <!-- Student Name -->
+                <div class="mb-3">
+                  <label for="studentName" class="form-label"
+                    >Họ và tên sinh viên
+                    <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="studentName"
+                    th:field="*{studentName}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('studentName') ? 'form-error' : ''}"
+                    placeholder="Nhập họ và tên đầy đủ"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('studentName')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{studentName}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Student ID -->
+                <div class="mb-3">
+                  <label for="studentId" class="form-label"
+                    >Mã sinh viên <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="studentId"
+                    th:field="*{studentId}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('studentId') ? 'form-error' : ''}"
+                    placeholder="Ví dụ: SV123456"
+                  />
+                  <small class="text-muted d-block mt-1">
+                    Định dạng: 2 chữ cái theo sau là các chữ số (ví dụ:
+                    SV123456)
+                  </small>
+                  <div
+                    th:if="${#fields.hasErrors('studentId')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{studentId}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                  <label for="email" class="form-label"
+                    >Email liên hệ <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="email"
+                    id="email"
+                    th:field="*{email}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('email') ? 'form-error' : ''}"
+                    placeholder="example@email.com"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('email')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{email}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Quantity -->
+                <div class="mb-3">
+                  <label for="quantity" class="form-label"
+                    >Số lượng mượn <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="number"
+                    id="quantity"
+                    th:field="*{quantity}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('quantity') ? 'form-error' : ''}"
+                    min="1"
+                    placeholder="Nhập số lượng"
+                  />
+                  <small class="text-muted d-block mt-1">
+                    Tối đa:
+                    <span th:text="${equipment.quantityAvailable}">Max</span>
+                    cái
+                  </small>
+                  <div
+                    th:if="${#fields.hasErrors('quantity')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{quantity}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Receive Date -->
+                <div class="mb-3">
+                  <label for="receiveDate" class="form-label"
+                    >Ngày dự kiến nhận <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="date"
+                    id="receiveDate"
+                    th:field="*{receiveDate}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('receiveDate') ? 'form-error' : ''}"
+                    th:min="${#temporals.format(T(java.time.LocalDate).now().plusDays(1), 'yyyy-MM-dd')}"
+                  />
+                  <small class="text-muted d-block mt-1"
+                    >Phải là ngày trong tương lai</small
+                  >
+                  <div
+                    th:if="${#fields.hasErrors('receiveDate')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{receiveDate}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Return Date -->
+                <div class="mb-3">
+                  <label for="returnDate" class="form-label"
+                    >Ngày dự kiến trả <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="date"
+                    id="returnDate"
+                    th:field="*{returnDate}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('returnDate') ? 'form-error' : ''}"
+                    th:min="${#temporals.format(T(java.time.LocalDate).now().plusDays(2), 'yyyy-MM-dd')}"
+                  />
+                  <small class="text-muted d-block mt-1"
+                    >Phải sau ngày nhận thiết bị</small
+                  >
+                  <div
+                    th:if="${#fields.hasErrors('returnDate')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{returnDate}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Borrow Reason -->
+                <div class="mb-3">
+                  <label for="borrowReason" class="form-label"
+                    >Lý do mượn <span class="text-danger">*</span></label
+                  >
+                  <textarea
+                    id="borrowReason"
+                    th:field="*{borrowReason}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('borrowReason') ? 'form-error' : ''}"
+                    rows="4"
+                    placeholder="Mô tả lý do bạn cần mượn thiết bị này..."
+                  ></textarea>
+                  <div
+                    th:if="${#fields.hasErrors('borrowReason')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{borrowReason}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="d-flex gap-2 mt-4">
+                  <button type="submit" class="btn btn-success btn-lg">
+                    ✓ Gửi Đơn Đăng Ký
+                  </button>
+                  <a th:href="@{/equipment}" class="btn btn-secondary btn-lg">
+                    ← Quay Lại
+                  </a>
+                </div>
+              </form>
+
+              <!-- Lab Room Form -->
+              <form
+                th:unless="${itemType == 'equipment'}"
+                th:action="@{/borrow/submit-lab-room/{id}(id=${labRoom.id})}"
+                method="post"
+                th:object="${borrowRequest}"
+                class="needs-validation"
+                novalidate
+              >
+                <!-- Student Name -->
+                <div class="mb-3">
+                  <label for="studentName" class="form-label"
+                    >Họ và tên sinh viên
+                    <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="studentName"
+                    th:field="*{studentName}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('studentName') ? 'form-error' : ''}"
+                    placeholder="Nhập họ và tên đầy đủ"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('studentName')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{studentName}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Student ID -->
+                <div class="mb-3">
+                  <label for="studentId" class="form-label"
+                    >Mã sinh viên <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="studentId"
+                    th:field="*{studentId}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('studentId') ? 'form-error' : ''}"
+                    placeholder="Ví dụ: SV123456"
+                  />
+                  <small class="text-muted d-block mt-1">
+                    Định dạng: 2 chữ cái theo sau là các chữ số (ví dụ:
+                    SV123456)
+                  </small>
+                  <div
+                    th:if="${#fields.hasErrors('studentId')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{studentId}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                  <label for="email" class="form-label"
+                    >Email liên hệ <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="email"
+                    id="email"
+                    th:field="*{email}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('email') ? 'form-error' : ''}"
+                    placeholder="example@email.com"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('email')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{email}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Use Start Date -->
+                <div class="mb-3">
+                  <label for="receiveDate" class="form-label"
+                    >Ngày bắt đầu sử dụng
+                    <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="date"
+                    id="receiveDate"
+                    th:field="*{receiveDate}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('receiveDate') ? 'form-error' : ''}"
+                    th:min="${#temporals.format(T(java.time.LocalDate).now().plusDays(1), 'yyyy-MM-dd')}"
+                  />
+                  <small class="text-muted d-block mt-1"
+                    >Phải là ngày trong tương lai</small
+                  >
+                  <div
+                    th:if="${#fields.hasErrors('receiveDate')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{receiveDate}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Use End Date -->
+                <div class="mb-3">
+                  <label for="returnDate" class="form-label"
+                    >Ngày kết thúc sử dụng
+                    <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="date"
+                    id="returnDate"
+                    th:field="*{returnDate}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('returnDate') ? 'form-error' : ''}"
+                    th:min="${#temporals.format(T(java.time.LocalDate).now().plusDays(2), 'yyyy-MM-dd')}"
+                  />
+                  <small class="text-muted d-block mt-1"
+                    >Phải sau ngày bắt đầu</small
+                  >
+                  <div
+                    th:if="${#fields.hasErrors('returnDate')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{returnDate}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Purpose -->
+                <div class="mb-3">
+                  <label for="borrowReason" class="form-label"
+                    >Mục đích sử dụng <span class="text-danger">*</span></label
+                  >
+                  <textarea
+                    id="borrowReason"
+                    th:field="*{borrowReason}"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('borrowReason') ? 'form-error' : ''}"
+                    rows="4"
+                    placeholder="Mô tả mục đích sử dụng phòng Lab..."
+                  ></textarea>
+                  <div
+                    th:if="${#fields.hasErrors('borrowReason')}"
+                    class="error-message"
+                  >
+                    <span th:errors="*{borrowReason}">Error</span>
+                  </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="d-flex gap-2 mt-4">
+                  <button type="submit" class="btn btn-success btn-lg">
+                    ✓ Gửi Đơn Đăng Ký
+                  </button>
+                  <a th:href="@{/lab-rooms}" class="btn btn-secondary btn-lg">
+                    ← Quay Lại
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

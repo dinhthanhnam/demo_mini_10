@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout.html"
+      lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <main layout:fragment="content" class="py-4">
+        <!-- Admin Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="bg-danger bg-opacity-10 border-start border-4 border-danger rounded p-4">
+                    <h1 class="fw-bold mb-2">🔐 Admin Dashboard</h1>
+                    <p class="text-muted mb-0">Quản lý yêu cầu mượn/sử dụng thiết bị và phòng Lab</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h3 class="text-warning" th:text="${#lists.size(pendingRequests)}">0</h3>
+                        <p class="text-muted mb-0">Yêu cầu chờ xác nhận</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h3 class="text-success" th:text="${#lists.size(approvedRequests)}">0</h3>
+                        <p class="text-muted mb-0">Yêu cầu đã phê duyệt</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h3 class="text-info" th:text="${#lists.size(allRequests)}">0</h3>
+                        <p class="text-muted mb-0">Tổng số yêu cầu</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Requests -->
+        <section class="mb-5">
+            <h2 class="mb-3 fw-bold border-bottom pb-2">
+                ⏳ Yêu Cầu Chờ Xác Nhận
+                <span class="badge bg-warning text-dark" th:text="${#lists.size(pendingRequests)}">0</span>
+            </h2>
+            <div th:if="${#lists.isEmpty(pendingRequests)}" class="alert alert-light">
+                Không có yêu cầu chờ xác nhận nào.
+            </div>
+            <div th:unless="${#lists.isEmpty(pendingRequests)}" class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên Sinh Viên</th>
+                            <th>Mã Sinh Viên</th>
+                            <th>Email</th>
+                            <th>Ngày Nhận/Sử Dụng</th>
+                            <th>Trạng Thái</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="request : ${pendingRequests}">
+                            <td th:text="${request.id}">1</td>
+                            <td th:text="${request.studentName}">Name</td>
+                            <td th:text="${request.studentId}">SV123</td>
+                            <td th:text="${request.email}">email@example.com</td>
+                            <td th:text="${#temporals.format(request.receiveDate, 'dd/MM/yyyy')}">01/01/2026</td>
+                            <td>
+                                <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                            </td>
+                            <td>
+                                <a th:href="@{/admin/request/{id}(id=${request.id})}" 
+                                   class="btn btn-sm btn-info">Chi tiết</a>
+                                <form th:action="@{/admin/approve/{id}(id=${request.id})}" 
+                                      method="post" 
+                                      style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-success">✓ Duyệt</button>
+                                </form>
+                                <form th:action="@{/admin/reject/{id}(id=${request.id})}" 
+                                      method="post" 
+                                      style="display:inline;"
+                                      onclick="return confirm('Bạn chắc chắn muốn từ chối?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">✗ Từ chối</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Approved Requests -->
+        <section>
+            <h2 class="mb-3 fw-bold border-bottom pb-2">
+                ✓ Yêu Cầu Đã Phê Duyệt
+                <span class="badge bg-success" th:text="${#lists.size(approvedRequests)}">0</span>
+            </h2>
+            <div th:if="${#lists.isEmpty(approvedRequests)}" class="alert alert-light">
+                Không có yêu cầu đã phê duyệt nào.
+            </div>
+            <div th:unless="${#lists.isEmpty(approvedRequests)}" class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên Sinh Viên</th>
+                            <th>Mã Sinh Viên</th>
+                            <th>Email</th>
+                            <th>Số Lượng</th>
+                            <th>Ngày Nhận</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="request : ${approvedRequests}">
+                            <td th:text="${request.id}">1</td>
+                            <td th:text="${request.studentName}">Name</td>
+                            <td th:text="${request.studentId}">SV123</td>
+                            <td th:text="${request.email}">email@example.com</td>
+                            <td th:text="${request.quantity}">1</td>
+                            <td th:text="${#temporals.format(request.receiveDate, 'dd/MM/yyyy')}">01/01/2026</td>
+                            <td>
+                                <a th:href="@{/admin/request/{id}(id=${request.id})}" 
+                                   class="btn btn-sm btn-info">Chi tiết</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
