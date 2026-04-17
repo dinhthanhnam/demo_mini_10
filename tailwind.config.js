@@ -1,8 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./*.{html,js}"], // Đường dẫn tới các file html của bạn
+  content: [
+    "./src/main/webapp/templates/**/*.{html,js}",
+    "./*.{html,js}"
+  ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['system-ui', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 }

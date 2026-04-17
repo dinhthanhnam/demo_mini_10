@@ -3,6 +3,8 @@ package com.example.demo_mini_10.DTO;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,6 +40,7 @@ public class BorrowRequest implements Serializable {
     private LocalDate receiveDate;
 
     @NotNull(message = "Ngày dự kiến trả không được để trống")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate returnDate;
 
     @NotBlank(message = "Lý do mượn không được để trống")

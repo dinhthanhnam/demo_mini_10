@@ -12,39 +12,206 @@
   </head>
   <body>
     <main layout:fragment="content" class="py-4">
-      <div class="row">
-        <div class="col-lg-8 mx-auto">
-          <div class="card shadow-sm">
-            <div class="card-body p-4">
-              <h1 class="card-title mb-4 fw-bold">
+      <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-full lg:col-span-8 lg:col-start-3">
+          <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div class="p-6">
+              <h1 class="text-2xl font-bold mb-6">
                 📋 Chi Tiết Yêu Cầu Mượn/Sử Dụng
                 <span
-                  class="badge"
                   th:if="${borrowRequest.status == 'PENDING'}"
                   th:text="${borrowRequest.status}"
-                  class="bg-warning text-dark"
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 ml-2"
                   >Status</span
                 >
                 <span
-                  class="badge"
                   th:if="${borrowRequest.status == 'APPROVED'}"
                   th:text="${borrowRequest.status}"
-                  class="bg-success"
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 ml-2"
                   >Status</span
                 >
                 <span
-                  class="badge"
                   th:if="${borrowRequest.status == 'REJECTED'}"
                   th:text="${borrowRequest.status}"
-                  class="bg-danger"
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 ml-2"
                   >Status</span
                 >
               </h1>
 
               <!-- Item Information -->
               <div
-                class="alert alert-light border-start border-4 border-primary mb-4"
+                class="bg-white border-l-4 border-blue-500 rounded-lg p-4 mb-6"
               >
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" th:if="${itemType == 'equipment'}">
+                  <div>
+                    <img
+                      th:src="${equipment.imageUrl}"
+                      class="w-full rounded"
+                      th:alt="${equipment.name}"
+                      alt="Equipment"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <h5 class="font-bold mb-2" th:text="${equipment.name}">
+                      Equipment Name
+                    </h5>
+                    <p class="text-gray-600" th:text="${equipment.description}">
+                      Description
+                    </p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" th:unless="${itemType == 'equipment'}">
+                  <div>
+                    <img
+                      th:src="${labRoom.imageUrl}"
+                      class="w-full rounded"
+                      th:alt="${labRoom.roomName}"
+                      alt="Lab Room"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <h5 class="font-bold mb-2" th:text="${labRoom.roomName}">
+                      Lab Room Name
+                    </h5>
+                    <p class="text-gray-600" th:text="${labRoom.description}">
+                      Description
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Student Information -->
+              <h5 class="font-bold mb-3 border-b pb-2 border-gray-300">
+                Thông Tin Sinh Viên
+              </h5>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <p class="text-gray-500 text-sm mb-1">Họ và tên</p>
+                  <p class="font-bold" th:text="${borrowRequest.studentName}">
+                    Student Name
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-500 text-sm mb-1">Mã sinh viên</p>
+                  <p class="font-bold" th:text="${borrowRequest.studentId}">
+                    Student ID
+                  </p>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <p class="text-gray-500 text-sm mb-1">Email liên hệ</p>
+                  <p class="font-bold">
+                    <a
+                      th:href="@{'mailto:' + ${borrowRequest.email}}"
+                      th:text="${borrowRequest.email}"
+                      class="text-blue-600 hover:underline"
+                    >
+                      email@example.com
+                    </a>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Borrowing Details -->
+              <h5 class="font-bold mb-3 border-b pb-2 border-gray-300">
+                Chi Tiết Mượn/Sử Dụng
+              </h5>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <p class="text-gray-500 text-sm mb-1">Số lượng</p>
+                  <p class="font-bold" th:text="${borrowRequest.quantity}">
+                    Quantity
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-500 text-sm mb-1">Ngày nhận/bắt đầu</p>
+                  <p
+                    class="font-bold"
+                    th:text="${#temporals.format(borrowRequest.receiveDate, 'dd/MM/yyyy')}"
+                  >
+                    Receive Date
+                  </p>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <p class="text-gray-500 text-sm mb-1">Ngày trả/kết thúc</p>
+                  <p
+                    class="font-bold"
+                    th:text="${#temporals.format(borrowRequest.returnDate, 'dd/MM/yyyy')}"
+                  >
+                    Return Date
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-500 text-sm mb-1">Khoảng thời gian</p>
+                  <p
+                    class="font-bold"
+                    th:text="${#temporals.daysBetween(borrowRequest.receiveDate, borrowRequest.returnDate)} + ' ngày'"
+                  >
+                    Duration
+                  </p>
+                </div>
+              </div>
+
+              <!-- Reason -->
+              <h5 class="font-bold mb-3 border-b pb-2 border-gray-300">
+                Lý Do Mượn/Mục Đích Sử Dụng
+              </h5>
+              <p class="text-gray-800 mb-6" th:text="${borrowRequest.borrowReason}">
+                Borrowing reason/purpose
+              </p>
+
+              <!-- Actions -->
+              <div
+                th:if="${borrowRequest.status == 'PENDING'}"
+                class="flex gap-3 mt-6 pt-6 border-t border-gray-300"
+              >
+                <form
+                  th:action="@{/admin/approve/{id}(id=${borrowRequest.id})}"
+                  method="post"
+                  style="display: inline"
+                >
+                  <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded font-medium hover:bg-green-700 transition">
+                    ✓ Phê Duyệt Yêu Cầu
+                  </button>
+                </form>
+                <form
+                  th:action="@{/admin/reject/{id}(id=${borrowRequest.id})}"
+                  method="post"
+                  style="display: inline"
+                  onclick="return confirm('Bạn chắc chắn muốn từ chối?');"
+                >
+                  <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded font-medium hover:bg-red-700 transition">
+                    ✗ Từ Chối Yêu Cầu
+                  </button>
+                </form>
+                <a
+                  th:href="@{/admin/dashboard}"
+                  class="bg-gray-500 text-white px-6 py-3 rounded font-medium hover:bg-gray-600 transition"
+                >
+                  ← Quay Lại
+                </a>
+              </div>
+
+              <div
+                th:unless="${borrowRequest.status == 'PENDING'}"
+                class="mt-6 pt-6 border-t border-gray-300"
+              >
+                <a
+                  th:href="@{/admin/dashboard}"
+                  class="inline-block bg-gray-500 text-white px-6 py-3 rounded font-medium hover:bg-gray-600 transition"
+                >
+                  ← Quay Lại Dashboard
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
                 <div class="row" th:if="${itemType == 'equipment'}">
                   <div class="col-md-3">
                     <img

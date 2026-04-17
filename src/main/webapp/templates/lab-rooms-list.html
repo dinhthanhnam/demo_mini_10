@@ -12,48 +12,48 @@
   </head>
   <body>
     <main layout:fragment="content" class="py-4">
-      <h1 class="mb-4 fw-bold">🏢 Danh Sách Phòng Lab</h1>
+      <h1 class="mb-6 text-2xl font-bold">🏢 Danh Sách Phòng Lab</h1>
 
-      <div class="row">
-        <div th:if="${#lists.isEmpty(labRoomList)}" class="col-12">
-          <div class="alert alert-info">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div th:if="${#lists.isEmpty(labRoomList)}" class="col-span-full">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-700">
             Chưa có phòng Lab nào trong hệ thống.
           </div>
         </div>
-        <div th:each="labRoom : ${labRoomList}" class="col-md-6 col-lg-4 mb-4">
-          <div class="card equipment-card h-100 shadow-sm">
+        <div th:each="labRoom : ${labRoomList}">
+          <div class="equipment-card bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
             <img
               th:src="${labRoom.imageUrl}"
-              class="card-img-top equipment-image"
+              class="equipment-image w-full"
               th:alt="${labRoom.roomName}"
               alt="Lab Room"
             />
-            <div class="card-body d-flex flex-column">
+            <div class="p-4 flex flex-col">
               <h5
-                class="card-title fw-bold text-truncate"
+                class="font-bold truncate mb-2"
                 th:text="${labRoom.roomName}"
               >
                 Lab Room Name
               </h5>
               <p
-                class="card-text text-muted small"
+                class="text-gray-500 text-sm mb-3 flex-grow"
                 th:text="${labRoom.description}"
               >
                 Description
               </p>
               <div class="mt-auto">
-                <p class="mb-3">
-                  <span th:if="${labRoom.available}" class="badge bg-success">
+                <p class="mb-3 flex gap-2">
+                  <span th:if="${labRoom.available}" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                     ✓ Khả dụng
                   </span>
                   <span
                     th:unless="${labRoom.available}"
-                    class="badge bg-danger"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800"
                   >
                     ✗ Không khả dụng
                   </span>
                   <span
-                    class="badge bg-info ms-2"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
                     th:text="'Sức chứa: ' + ${labRoom.capacity} + ' người'"
                   >
                     Capacity
@@ -62,13 +62,13 @@
                 <a
                   th:if="${labRoom.available}"
                   th:href="@{/borrow/lab-room/{id}(id=${labRoom.id})}"
-                  class="btn btn-borrow btn-sm w-100"
+                  class="block text-center bg-green-600 text-white px-4 py-2 rounded font-medium hover:bg-green-700 transition"
                 >
                   📋 Đăng ký sử dụng
                 </a>
                 <button
                   th:unless="${labRoom.available}"
-                  class="btn btn-secondary btn-sm w-100"
+                  class="w-full bg-gray-400 text-white px-4 py-2 rounded font-medium cursor-not-allowed opacity-50"
                   disabled
                 >
                   🔒 Không khả dụng
@@ -79,8 +79,8 @@
         </div>
       </div>
 
-      <div class="text-center mt-4">
-        <a th:href="@{/}" class="btn btn-outline-primary"
+      <div class="text-center mt-8">
+        <a th:href="@{/}" class="inline-block border border-blue-600 text-blue-600 px-6 py-2 rounded font-medium hover:bg-blue-50 transition"
           >← Quay lại trang chủ</a
         >
       </div>
