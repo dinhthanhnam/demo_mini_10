@@ -1,45 +1,50 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="layout.html"
-      lang="vi">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="layout.html" lang="vi">
+
 <head>
   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký Thành Công</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Ký Thành Công</title>
 </head>
-<body>
-    <main layout:fragment="content" class="py-4">
-        <div class="grid grid-cols-12 gap-4">
-            <div class="col-span-full lg:col-span-6 lg:col-start-4">
-                <div class="bg-white rounded-lg border border-green-500 shadow-lg">
-                    <div class="p-8 text-center">
-                        <div class="text-6xl mb-6">✓</div>
-                        <h1 class="text-3xl font-bold text-green-600 mb-3">Đăng Ký Thành Công!</h1>
-                        <p class="text-gray-600 mb-6">
-                            Đơn đăng ký mượn/sử dụng của bạn đã được gửi thành công.
-                        </p>
-                        <div class="bg-white border-l-4 border-green-500 rounded-lg p-4 mb-6">
-                            <p class="mb-2">
-                                <strong>Trạng thái:</strong> <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Chờ xác nhận</span>
-                            </p>
-                            <p class="text-gray-500 text-sm">
-                                Quản lý Lab sẽ xem xét và liên hệ với bạn trong thời gian sớm nhất.
-                            </p>
-                        </div>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <a th:href="@{/}" class="bg-blue-600 text-white px-6 py-3 rounded font-medium hover:bg-blue-700 transition">
-                                🏠 Trang Chủ
-                            </a>
-                            <a th:href="@{/equipment}" class="border border-blue-600 text-blue-600 px-6 py-3 rounded font-medium hover:bg-blue-50 transition">
-                                ⚙️ Thiết Bị
-                            </a>
-                        </div>
-                    </div>
-                </div>
+<body>
+  <main layout:fragment="content" class="py-4">
+    <div class="grid grid-cols-12 gap-4">
+      <div class="col-span-full lg:col-span-6 lg:col-start-4F">
+        <div class="bg-white rounded-lg border border-green-500 shadow-lg">
+          <div class="p-8 text-center">
+            <div class="text-6xl mb-6">✓</div>
+            <h1 class="text-3xl font-bold text-green-600 mb-3">Đăng Ký Thành Công!</h1>
+            <p class="text-gray-600 mb-6">
+              Đơn đăng ký mượn/sử dụng của bạn đã được gửi thành công.
+            </p>
+            <div class="bg-white border-l-4 border-green-500 rounded-lg p-4 mb-6">
+              <p class="mb-2">
+                <strong>Trạng thái:</strong> <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Chờ
+                  xác nhận</span>
+              </p>
+              <p class="text-gray-500 text-sm">
+                Quản lý Lab sẽ xem xét và liên hệ với bạn trong thời gian sớm nhất.
+              </p>
             </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <a th:href="@{/}"
+                class="bg-blue-600 text-white px-6 py-3 rounded font-medium hover:bg-blue-700 transition">
+                🏠 Trang Chủ
+              </a>
+              <a th:href="@{/equipment}"
+                class="border border-blue-600 text-blue-600 px-6 py-3 rounded font-medium hover:bg-blue-50 transition">
+                ⚙️ Thiết Bị
+              </a>
+            </div>
+          </div>
         </div>
-    </main>
+      </div>
+    </div>
+  </main>
 </body>
+
 </html>
